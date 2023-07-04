@@ -1,8 +1,27 @@
+# Deploy to Azure Kubernetes Service
+# Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '392a6b5a-876f-479c-a7e3-4e1e3a90b9d9'
+  imageRepository: 'hemaprasadpipelinessampleapp'
+  containerRegistry: 'kubernetes010.azurecr.io'
+  dockerfilePath: '**/app/Dockerfile'
+  tag: '$(Build.BuildId)'
+  imagePullSecret: 'kubernetes0107c46-auth'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+  # Name of the new namespace being created to deploy the PR changes.
+  k8sNamespaceForPR: 'review-app-$(System.PullRequest.PullRequestId)'
 
 stages:
 - stage: Build
